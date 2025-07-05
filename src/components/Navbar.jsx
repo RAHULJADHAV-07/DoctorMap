@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 
-import logo from '../assets/DR_logo .png'; // Update this if your logo file is different
+import logo from '../assets/DR_logo.png'; // Update this if your logo file is different
 
 const Navbar = () => {
   const { user, logout, darkMode, toggleDarkMode, isAuthenticated } = useAuth();
