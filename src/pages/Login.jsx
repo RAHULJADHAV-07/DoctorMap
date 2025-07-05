@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
+import { validateLoginField } from '../Validation/LoginValidation';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -21,30 +21,42 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    // Validate this field immediately
+    validateField(name, value);
+  };
+
+  // Validate a single field on blur/change
+  const validateField = (name, value) => {
+    let error = '';
+    if (name === 'email') {
+      if (!value) {
+        error = 'Email is required';
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        error = 'Email is invalid';
+      }
     }
+    if (name === 'password') {
+      if (!value) {
+        error = 'Password is required';
+      } else if (value.length < 6) {
+        error = 'Password must be at least 6 characters';
+      }
+    }
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -136,6 +148,7 @@ const Login = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={e => validateField('email', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.email ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -154,6 +167,7 @@ const Login = () => {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
+                  onBlur={e => validateField('password', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.password ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -208,3 +222,4 @@ const Login = () => {
 };
 
 export default Login;
+

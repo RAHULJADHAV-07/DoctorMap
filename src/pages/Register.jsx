@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { validateRegisterForm } from '../Validation/RegisterValidation';
+import { validateLoginField } from '../Validation/LoginValidation';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -28,48 +30,73 @@ const Register = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    validateField(name, value);
+  };
+
+  // Validate a single field on blur/change
+  const validateField = (name, value) => {
+    let error = '';
+    // Use login validation for email and password fields
+    if (name === 'email' || name === 'password') {
+      error = validateLoginField(name, value);
     }
+    // Name validation
+    if (name === 'name') {
+      if (!value || value.trim() === "") {
+        error = "Name is required.";
+      }
+    }
+    // Confirm password validation
+    if (name === 'confirmPassword') {
+      if (value !== formData.password) {
+        error = "Passwords do not match.";
+      }
+    }
+    // Phone validation
+    if (name === 'phone') {
+      if (!value) {
+        error = 'Phone number is required';
+      } else if (!/^\+?[\d\s-()]+$/.test(value)) {
+        error = 'Phone number is invalid';
+      }
+    }
+    // Location validation
+    if (name === 'location') {
+      if (!value.trim()) {
+        error = 'Location is required';
+      }
+    }
+    // Doctor specific validations
+    if (formData.role === 'doctor') {
+      if (name === 'specialization' && !value.trim()) {
+        error = 'Specialization is required for doctors';
+      }
+      if (name === 'experience' && !value.trim()) {
+        error = 'Experience is required for doctors';
+      }
+      if (name === 'fee' && (!value || value <= 0)) {
+        error = 'Consultation fee is required for doctors';
+      }
+    }
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    
+    // Use the shared validation for name, email, password, confirmPassword
+    const newErrors = validateRegisterForm(formData);
+
+    // Phone validation
     if (!formData.phone) {
       newErrors.phone = 'Phone number is required';
     } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Phone number is invalid';
     }
-    
+
+    // Location validation
     if (!formData.location.trim()) {
       newErrors.location = 'Location is required';
     }
-    
+
     // Doctor specific validations
     if (formData.role === 'doctor') {
       if (!formData.specialization.trim()) {
@@ -82,7 +109,7 @@ const Register = () => {
         newErrors.fee = 'Consultation fee is required for doctors';
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -179,6 +206,7 @@ const Register = () => {
                   type="text"
                   value={formData.name}
                   onChange={handleChange}
+                  onBlur={e => validateField('name', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.name ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -197,6 +225,7 @@ const Register = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={e => validateField('email', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.email ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -215,6 +244,7 @@ const Register = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
+                  onBlur={e => validateField('phone', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.phone ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -233,6 +263,7 @@ const Register = () => {
                   type="text"
                   value={formData.location}
                   onChange={handleChange}
+                  onBlur={e => validateField('location', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.location ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -254,6 +285,7 @@ const Register = () => {
                       type="text"
                       value={formData.specialization}
                       onChange={handleChange}
+                      onBlur={e => validateField('specialization', e.target.value)}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                         errors.specialization ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
@@ -272,6 +304,7 @@ const Register = () => {
                       type="text"
                       value={formData.experience}
                       onChange={handleChange}
+                      onBlur={e => validateField('experience', e.target.value)}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                         errors.experience ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
@@ -290,6 +323,7 @@ const Register = () => {
                       type="number"
                       value={formData.fee}
                       onChange={handleChange}
+                      onBlur={e => validateField('fee', e.target.value)}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                         errors.fee ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
@@ -310,6 +344,7 @@ const Register = () => {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
+                  onBlur={e => validateField('password', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.password ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
@@ -328,6 +363,7 @@ const Register = () => {
                   type="password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  onBlur={e => validateField('confirmPassword', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
                     errors.confirmPassword ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
