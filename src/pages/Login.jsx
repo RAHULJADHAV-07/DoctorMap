@@ -1,61 +1,61 @@
-// src/pages/Login.jsx
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { validateLoginField } from '../Validation/LoginValidation';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
+
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: 'patient'
+    email: "",
+    password: "",
+    role: "patient",
   });
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [showPassword, setShowPassword] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    // Validate this field immediately
     validateField(name, value);
   };
 
-  // Validate a single field on blur/change
   const validateField = (name, value) => {
-    let error = '';
-    if (name === 'email') {
+    let error = "";
+    if (name === "email") {
       if (!value) {
-        error = 'Email is required';
+        error = "Email is required";
       } else if (!/\S+@\S+\.\S+/.test(value)) {
-        error = 'Email is invalid';
+        error = "Email is invalid";
       }
     }
-    if (name === 'password') {
+    if (name === "password") {
       if (!value) {
-        error = 'Password is required';
+        error = "Password is required";
       } else if (value.length < 6) {
-        error = 'Password must be at least 6 characters';
+        error = "Password must be at least 6 characters";
       }
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = "Email is invalid";
     }
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,31 +63,29 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user data - in real app, this would come from your backend
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const userData = {
         id: Date.now(),
-        name: formData.role === 'doctor' ? 'Dr. John Doe' : 'John Doe',
+        name: formData.role === "doctor" ? "Dr. John Doe" : "John Doe",
         email: formData.email,
         role: formData.role,
-        phone: '+91 98765 43210',
-        specialization: formData.role === 'doctor' ? 'General Medicine' : undefined,
-        experience: formData.role === 'doctor' ? '5 years' : undefined,
-        location: 'Mumbai, Maharashtra'
+        phone: "+91 98765 43210",
+        specialization:
+          formData.role === "doctor" ? "General Medicine" : undefined,
+        experience: formData.role === "doctor" ? "5 years" : undefined,
+        location: "Mumbai, Maharashtra",
       };
-      
+
       login(userData);
       navigate(`/dashboard/${formData.role}`);
     } catch (error) {
-      setErrors({ general: 'Login failed. Please try again.' });
+      setErrors({ general: "Login failed. Please try again." });
     } finally {
       setIsLoading(false);
     }
@@ -98,16 +96,27 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
-            <svg className="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 2a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+            <svg
+              className="h-6 w-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 2a1 1 0 100-2 1 1 0 000 2z"
+                clipRule="evenodd"
+              />
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900 dark:text-white">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Or{' '}
-            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+            Or{" "}
+            <Link
+              to="/register"
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
               create a new account
             </Link>
           </p>
@@ -122,8 +131,12 @@ const Login = () => {
             )}
 
             <div className="space-y-4">
+              {/* Role Select */}
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   I am a
                 </label>
                 <select
@@ -138,8 +151,12 @@ const Login = () => {
                 </select>
               </div>
 
+              {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Email address
                 </label>
                 <input
@@ -148,34 +165,58 @@ const Login = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  onBlur={e => validateField('email', e.target.value)}
+                  onBlur={(e) => validateField("email", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
-                    errors.email ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    errors.email
+                      ? "border-red-500 dark:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
                   }`}
                   placeholder="Enter your email"
                 />
-                {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {/* Password Input with Eye Icon */}
+              <div className="relative">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Password
                 </label>
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  onBlur={e => validateField('password', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
-                    errors.password ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  onBlur={(e) => validateField("password", e.target.value)}
+                  className={`w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
+                    errors.password
+                      ? "border-red-500 dark:border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
                   }`}
                   placeholder="Enter your password"
                 />
-                {errors.password && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password}</p>}
+                <span
+                  className="absolute right-3 top-[65%] transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
+
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
+              {/* Remember Me & Forgot */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -184,33 +225,55 @@ const Login = () => {
                     type="checkbox"
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Remember me
                   </label>
                 </div>
-
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+                  <a
+                    href="#"
+                    className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  >
                     Forgot your password?
                   </a>
                 </div>
               </div>
             </div>
 
+            {/* Submit Button */}
             <div className="mt-6">
               <button
                 type="submit"
                 disabled={isLoading}
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
-                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {isLoading ? (
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                {isLoading && (
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
-                ) : null}
+                )}
                 Sign in
               </button>
             </div>
@@ -222,4 +285,3 @@ const Login = () => {
 };
 
 export default Login;
-
