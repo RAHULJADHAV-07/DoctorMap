@@ -84,22 +84,21 @@ const Register = () => {
   };
 
   const validateForm = () => {
-    // Use the shared validation for name, email, password, confirmPassword
+   
     const newErrors = validateRegisterForm(formData);
 
-    // Phone validation
+   
     if (!formData.phone) {
       newErrors.phone = 'Phone number is required';
     } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Phone number is invalid';
     }
 
-    // Location validation
+   
     if (!formData.location.trim()) {
       newErrors.location = 'Location is required';
     }
 
-    // Doctor specific validations
     if (formData.role === 'doctor') {
       if (!formData.specialization.trim()) {
         newErrors.specialization = 'Specialization is required for doctors';
@@ -124,10 +123,10 @@ const Register = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
+      
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Create user data
+    
       const userData = {
         id: Date.now(),
         name: formData.role === 'doctor' ? `Dr. ${formData.name}` : formData.name,
@@ -274,7 +273,6 @@ const Register = () => {
                 {errors.location && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.location}</p>}
               </div>
 
-              {/* Doctor specific fields */}
               {formData.role === 'doctor' && (
                 <>
                   <div>

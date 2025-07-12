@@ -1,5 +1,5 @@
 
-// Login form validation utility
+
 export function validateLoginField(name, value) {
   let error = '';
   if (name === 'email') {

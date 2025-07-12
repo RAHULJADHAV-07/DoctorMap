@@ -8,7 +8,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
+   
       <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
@@ -48,7 +48,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Features Section */}
+      
       <div className="py-16 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -100,7 +100,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Stats Section */}
+    
       <div className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 text-center">
@@ -124,7 +124,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
+     
       <div className="bg-blue-600 dark:bg-blue-700 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">

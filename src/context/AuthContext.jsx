@@ -22,15 +22,13 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(savedUser));
     }
 
-    // Check for dark mode preference
     const savedDarkMode = localStorage.getItem('doctormap_darkmode');
     if (savedDarkMode) {
       setDarkMode(JSON.parse(savedDarkMode));
     }
   }, []);
 
-  useEffect(() => {
-    // Apply dark mode class to document
+  useEffect(() => {t
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {

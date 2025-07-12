@@ -131,7 +131,7 @@ const Login = () => {
             )}
 
             <div className="space-y-4">
-              {/* Role Select */}
+             
               <div>
                 <label
                   htmlFor="role"
@@ -151,7 +151,7 @@ const Login = () => {
                 </select>
               </div>
 
-              {/* Email Input */}
+           
               <div>
                 <label
                   htmlFor="email"
@@ -180,7 +180,7 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Password Input with Eye Icon */}
+            
               <div className="relative">
                 <label
                   htmlFor="password"
@@ -216,7 +216,7 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Remember Me & Forgot */}
+             
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -243,7 +243,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="mt-6">
               <button
                 type="submit"

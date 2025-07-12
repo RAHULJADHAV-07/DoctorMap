@@ -42,7 +42,7 @@ const DashboardPatient = () => {
   useEffect(() => {
     let filtered = doctors;
 
-    // Filter by search term
+    
     if (searchTerm) {
       filtered = filtered.filter(doctor =>
         doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,12 +51,12 @@ const DashboardPatient = () => {
       );
     }
 
-    // Filter by specialization
+    
     if (selectedSpecialization) {
       filtered = filtered.filter(doctor => doctor.specialization === selectedSpecialization);
     }
 
-    // Filter by availability
+   
     if (availabilityFilter === 'available') {
       filtered = filtered.filter(doctor => doctor.available);
     } else if (availabilityFilter === 'busy') {
@@ -84,7 +84,7 @@ const DashboardPatient = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+       
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Welcome back, {user?.name || 'Patient'}!
@@ -94,7 +94,7 @@ const DashboardPatient = () => {
           </p>
         </div>
 
-        {/* Quick Stats */}
+       
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <div className="flex items-center">
@@ -157,7 +157,6 @@ const DashboardPatient = () => {
           </div>
         </div>
 
-        {/* Upcoming Appointments */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Upcoming Appointments
@@ -229,7 +228,6 @@ const DashboardPatient = () => {
             </div>
           </div>
 
-          {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -283,7 +281,7 @@ const DashboardPatient = () => {
             </div>
           </div>
 
-          {/* Results Count */}
+          
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Showing {filteredDoctors.length} of {doctors.length} doctors
@@ -303,7 +301,7 @@ const DashboardPatient = () => {
           </div>
         </div>
 
-        {/* Doctor List or Map */}
+       
         {showMap ? (
           <DoctorMap doctors={filteredDoctors} />
         ) : (
