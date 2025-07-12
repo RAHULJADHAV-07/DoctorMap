@@ -38,8 +38,8 @@ const Login = () => {
     if (name === "password") {
       if (!value) {
         error = "Password is required";
-      } else if (value.length < 6) {
-        error = "Password must be at least 6 characters";
+      } else if (value.length < 8) {
+        error = "Password must be at least 8 characters";
       }
     }
     setErrors((prev) => ({ ...prev, [name]: error }));
@@ -54,8 +54,8 @@ const Login = () => {
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -203,7 +203,7 @@ const Login = () => {
                   placeholder="Enter your password"
                 />
                 <span
-                  className="absolute right-3 top-[65%] transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                  className="absolute right-3 top-[55%] transform -translate-y-1/2 text-gray-500 cursor-pointer"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
