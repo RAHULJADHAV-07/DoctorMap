@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -22,131 +21,74 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     validateField(name, value);
   };
 
-  // Validate a single field on blur/change
   const validateField = (name, value) => {
     let error = '';
-    // Use login validation for email and password fields
     if (name === 'email' || name === 'password') {
       error = validateLoginField(name, value);
     }
-    // Name validation
-    if (name === 'name') {
-      if (!value || value.trim() === "") {
-        error = "Name is required.";
-      }
-    }
-    // Confirm password validation
-    if (name === 'confirmPassword') {
-      if (value !== formData.password) {
-        error = "Passwords do not match.";
-      }
-    }
-    // Phone validation
-    if (name === 'phone') {
-      if (!value) {
-        error = 'Phone number is required';
-      } else if (!/^\+?[\d\s-()]+$/.test(value)) {
-        error = 'Phone number is invalid';
-      }
-    }
-    // Location validation
-    if (name === 'location') {
-      if (!value.trim()) {
-        error = 'Location is required';
-      }
-    }
-    // Doctor specific validations
+    if (name === 'name' && !value.trim()) error = 'Name is required.';
+    if (name === 'confirmPassword' && value !== formData.password) error = 'Passwords do not match.';
+    if (name === 'phone' && !/^\+?[\d\s-()]+$/.test(value)) error = 'Phone number is invalid';
+    if (name === 'location' && !value.trim()) error = 'Location is required';
     if (formData.role === 'doctor') {
-      if (name === 'specialization' && !value.trim()) {
-        error = 'Specialization is required for doctors';
-      }
-      if (name === 'experience' && !value.trim()) {
-        error = 'Experience is required for doctors';
-      }
-      if (name === 'fee' && (!value || value <= 0)) {
-        error = 'Consultation fee is required for doctors';
-      }
+      if (name === 'specialization' && !value.trim()) error = 'Specialization is required for doctors';
+      if (name === 'experience' && !value.trim()) error = 'Experience is required for doctors';
+      if (name === 'fee' && (!value || value <= 0)) error = 'Consultation fee is required';
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
-   
     const newErrors = validateRegisterForm(formData);
-
-   
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
+    if (!formData.phone || !/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Phone number is invalid';
     }
-
-   
-    if (!formData.location.trim()) {
-      newErrors.location = 'Location is required';
-    }
-
+    if (!formData.location.trim()) newErrors.location = 'Location is required';
     if (formData.role === 'doctor') {
-      if (!formData.specialization.trim()) {
-        newErrors.specialization = 'Specialization is required for doctors';
-      }
-      if (!formData.experience.trim()) {
-        newErrors.experience = 'Experience is required for doctors';
-      }
-      if (!formData.fee || formData.fee <= 0) {
-        newErrors.fee = 'Consultation fee is required for doctors';
-      }
+      if (!formData.specialization.trim()) newErrors.specialization = 'Specialization is required';
+      if (!formData.experience.trim()) newErrors.experience = 'Experience is required';
+      if (!formData.fee || formData.fee <= 0) newErrors.fee = 'Fee must be a positive number';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsLoading(true);
-    
+    const userData = {
+      id: Date.now(),
+      name: formData.role === 'doctor' ? `Dr. ${formData.name}` : formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      location: formData.location,
+      role: formData.role,
+      ...(formData.role === 'doctor' && {
+        specialization: formData.specialization,
+        experience: formData.experience,
+        fee: parseInt(formData.fee),
+        rating: 4.5,
+        available: true
+      })
+    };
+
     try {
-      
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-    
-      const userData = {
-        id: Date.now(),
-        name: formData.role === 'doctor' ? `Dr. ${formData.name}` : formData.name,
-        email: formData.email,
-        role: formData.role,
-        phone: formData.phone,
-        location: formData.location,
-        ...(formData.role === 'doctor' && {
-          specialization: formData.specialization,
-          experience: formData.experience,
-          fee: parseInt(formData.fee),
-          rating: 4.5,
-          available: true
-        })
-      };
-      
-      register(userData);
+      await register(userData);
       navigate(`/dashboard/${formData.role}`);
-    } catch (error) {
-      setErrors({ general: 'Registration failed. Please try again.' });
+    } catch (err) {
+      setErrors({ general: err.message || 'Registration failed. Please try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +96,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+     <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
             <svg className="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">

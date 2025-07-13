@@ -1,15 +1,10 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { Eye, EyeOff } from "lucide-react";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    role: "patient",
-  });
-
+  const [formData, setFormData] = useState({ email: '', password: '', role: 'patient' });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -17,46 +12,23 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    validateField(name, value);
-  };
-
   const validateField = (name, value) => {
-    let error = "";
-    if (name === "email") {
-      if (!value) {
-        error = "Email is required";
-      } else if (!/\S+@\S+\.\S+/.test(value)) {
-        error = "Email is invalid";
-      }
+    let error = '';
+    if (name === 'email') {
+      if (!value) error = 'Email is required';
+      else if (!/\S+@\S+\.\S+/.test(value)) error = 'Email is invalid';
     }
-    if (name === "password") {
-      if (!value) {
-        error = "Password is required";
-      } else if (value.length < 8) {
-        error = "Password must be at least 8 characters";
-      }
+    if (name === 'password') {
+      if (!value) error = 'Password is required';
+      else if (value.length < 8) error = 'Password must be at least 8 characters';
     }
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email';
+    if (!formData.password || formData.password.length < 8) newErrors.password = 'Invalid password';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -64,31 +36,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsLoading(true);
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const userData = {
-        id: Date.now(),
-        name: formData.role === "doctor" ? "Dr. John Doe" : "John Doe",
-        email: formData.email,
-        role: formData.role,
-        phone: "+91 98765 43210",
-        specialization:
-          formData.role === "doctor" ? "General Medicine" : undefined,
-        experience: formData.role === "doctor" ? "5 years" : undefined,
-        location: "Mumbai, Maharashtra",
-      };
-
-      login(userData);
+      await login(formData);
       navigate(`/dashboard/${formData.role}`);
-    } catch (error) {
-      setErrors({ general: "Login failed. Please try again." });
+    } catch (err) {
+      setErrors({ general: err.message || 'Login failed. Please try again.' });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
   };
 
   return (
